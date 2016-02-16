@@ -78,7 +78,7 @@ namespace ScrapProject
 
         private static void Main(string[] args)
         {
-            Encode(@"C:\Users\ut25jd\Documents\Visual Studio 2015\Projects\ScrapProject\ScrapProject\program.cs");
+            Encode(@"temp.txt");
             var apple = new Fruit { Name = "Granny smith", Color = "Green" };
             apple["Size"] = 3.0;
             apple["Pips"] = 5;
@@ -108,15 +108,14 @@ namespace ScrapProject
 namespace Westwind.Utilities.Dynamic
 {
     /// <summary>
-    /// Class that provides extensible properties and methods. This
-    /// dynamic object stores 'extra' properties in a dictionary or
-    /// checks the actual properties of the instance.
-    ///
-    /// This means you can subclass this expando and retrieve either
-    /// native properties or properties from values in the dictionary.
-    ///
+    /// Class that provides extensible properties and methods. This dynamic object stores 'extra'
+    /// properties in a dictionary or checks the actual properties of the instance.
+    /// 
+    /// This means you can subclass this expando and retrieve either native properties or properties
+    /// from values in the dictionary.
+    /// 
     /// This type allows you three ways to access its properties:
-    ///
+    /// 
     /// Directly: any explicitly declared properties are accessible
     /// Dynamic: dynamic cast allows access to dictionary and native properties/methods
     /// Dictionary: Any of the extended properties are accessible via IDictionary interface
@@ -139,15 +138,14 @@ namespace Westwind.Utilities.Dynamic
         private Type instanceType;
 
         /// <summary>
-        /// String Dictionary that contains the extra dynamic values
-        /// stored on this object/instance
+        /// String Dictionary that contains the extra dynamic values stored on this object/instance
         /// </summary>
         /// <remarks>Using PropertyBag to support XML Serialization of the dictionary</remarks>
         //public PropertyBag properties = new PropertyBag();
         /// <summary>
-        /// This constructor just works off the internal dictionary and any
-        /// public properties of this object.
-        ///
+        /// This constructor just works off the internal dictionary and any public properties of
+        /// this object.
+        /// 
         /// Note you can subclass Expando.
         /// </summary>
         protected Expando()
@@ -159,8 +157,8 @@ namespace Westwind.Utilities.Dynamic
         /// Allows passing in an existing instance variable to 'extend'.
         /// </summary>
         /// <remarks>
-        /// You can pass in null here if you don't want to
-        /// check native properties and only check the Dictionary!
+        /// You can pass in null here if you don't want to check native properties and only check
+        /// the Dictionary!
         /// </remarks>
         /// <param name="instance"></param>
         protected Expando(object instance)
@@ -179,23 +177,17 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Convenience method that provides a string Indexer
-        /// to the properties collection AND the strongly typed
-        /// properties of the object by name.
-        ///
-        /// // dynamic
-        /// exp["Address"] = "112 nowhere lane";
-        /// // strong
-        /// var name = exp["StronglyTypedProperty"] as string;
+        /// Convenience method that provides a string Indexer to the properties collection AND the
+        /// strongly typed properties of the object by name.
+        /// 
+        /// // dynamic exp["Address"] = "112 nowhere lane"; // strong var name =
+        /// exp["StronglyTypedProperty"] as string;
         /// </summary>
         /// <remarks>
-        /// The getter checks the properties dictionary first
-        /// then looks in PropertyInfo for properties.
-        /// The setter checks the instance properties before
-        /// checking the properties dictionary.
+        /// The getter checks the properties dictionary first then looks in PropertyInfo for
+        /// properties. The setter checks the instance properties before checking the properties dictionary.
         /// </remarks>
         /// <param name="key"></param>
-        ///
         /// <returns></returns>
         public object this[string key]
         {
@@ -235,8 +227,7 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Checks whether a property exists in the Property collection
-        /// or as a property on the instance
+        /// Checks whether a property exists in the Property collection or as a property on the instance
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -277,8 +268,8 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Try to retrieve a member by name first from instance properties
-        /// followed by the collection entries.
+        /// Try to retrieve a member by name first from instance properties followed by the
+        /// collection entries.
         /// </summary>
         /// <param name="binder"></param>
         /// <param name="result"></param>
@@ -311,8 +302,8 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Dynamic invocation method. Currently allows only for Reflection based
-        /// operation (no ability to add methods dynamically).
+        /// Dynamic invocation method. Currently allows only for Reflection based operation (no
+        /// ability to add methods dynamically).
         /// </summary>
         /// <param name="binder"></param>
         /// <param name="args"></param>
@@ -339,8 +330,8 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Property setter implementation tries to retrieve value from instance
-        /// first then into this object
+        /// Property setter implementation tries to retrieve value from instance first then into
+        /// this object
         /// </summary>
         /// <param name="binder"></param>
         /// <param name="value"></param>
