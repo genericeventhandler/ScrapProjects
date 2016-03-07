@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,11 @@ namespace ScrapProject
     {
         private static void Encode(string filename)
         {
+            var stream = new MemoryStream();
+            stream.WriteByte(100);
+            stream.Seek(0, SeekOrigin.Begin);
+            Console.WriteLine(stream.ReadByte());
+
             using (Bitmap b = new Bitmap("beach.png"))
             {
                 var width = b.Width;
@@ -72,7 +78,7 @@ namespace ScrapProject
                     }
                 }
 
-                b.Save(filename + ".x.png", System.Drawing.Imaging.ImageFormat.Png);
+                b.Save(filename + ".x.png", ImageFormat.Png);
             }
         }
 
@@ -109,7 +115,7 @@ namespace Westwind.Utilities.Dynamic
 {
     /// <summary>
     /// Class that provides extensible properties and methods. This dynamic object stores 'extra'
-    /// properties in a dictionary or checks the actual properties of the instance.
+    /// properties in a dictionary or checks the actual properties of the newInstance.
     /// 
     /// This means you can subclass this expando and retrieve either native properties or properties
     /// from values in the dictionary.
@@ -126,19 +132,22 @@ namespace Westwind.Utilities.Dynamic
         private readonly SerializableDictionary<string, object> properties = new SerializableDictionary<string, object>();
 
         /// <summary>
-        /// instance of object passed in
+        /// newInstance of object passed in
         /// </summary>
+        [NonSerialized]
         private object instance;
 
+        [NonSerialized]
         private PropertyInfo[] instancePropertyInfo;
 
         /// <summary>
-        /// Cached type of the instance
+        /// Cached type of the newInstance
         /// </summary>
+        [NonSerialized]
         private Type instanceType;
 
         /// <summary>
-        /// String Dictionary that contains the extra dynamic values stored on this object/instance
+        /// String Dictionary that contains the extra dynamic values stored on this object/newInstance
         /// </summary>
         /// <remarks>Using PropertyBag to support XML Serialization of the dictionary</remarks>
         //public PropertyBag properties = new PropertyBag();
@@ -154,13 +163,14 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Allows passing in an existing instance variable to 'extend'.
+        /// Allows passing in an existing newInstance variable to 'extend'.
         /// </summary>
         /// <remarks>
         /// You can pass in null here if you don't want to check native properties and only check
         /// the Dictionary!
         /// </remarks>
         /// <param name="instance"></param>
+        // ReSharper disable once UnusedMember.Global
         protected Expando(object instance)
         {
             Initialize(instance);
@@ -185,7 +195,7 @@ namespace Westwind.Utilities.Dynamic
         /// </summary>
         /// <remarks>
         /// The getter checks the properties dictionary first then looks in PropertyInfo for
-        /// properties. The setter checks the instance properties before checking the properties dictionary.
+        /// properties. The setter checks the newInstance properties before checking the properties dictionary.
         /// </remarks>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -217,7 +227,7 @@ namespace Westwind.Utilities.Dynamic
                     return;
                 }
 
-                // check instance for existance of type first
+                // check newInstance for existance of type first
                 var miArray = instanceType.GetMember(key, BindingFlags.Public | BindingFlags.GetProperty);
                 if (miArray.Length > 0)
                     SetProperty(instance, key, value);
@@ -227,10 +237,11 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Checks whether a property exists in the Property collection or as a property on the instance
+        /// Checks whether a property exists in the Property collection or as a property on the newInstance
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
+        // ReSharper disable once UnusedMember.Global
         public bool Contains(KeyValuePair<string, object> item, bool includeInstanceProperties = false)
         {
             bool res = properties.ContainsKey(item.Key);
@@ -241,7 +252,7 @@ namespace Westwind.Utilities.Dynamic
             {
                 foreach (var prop in InstancePropertyInfo)
                 {
-                    if (prop.Name == item.Key)
+                    if (string.CompareOrdinal(prop.Name, item.Key) == 0)
                     {
                         return true;
                     }
@@ -268,7 +279,7 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Try to retrieve a member by name first from instance properties followed by the
+        /// Try to retrieve a member by name first from newInstance properties followed by the
         /// collection entries.
         /// </summary>
         /// <param name="binder"></param>
@@ -315,7 +326,7 @@ namespace Westwind.Utilities.Dynamic
             {
                 try
                 {
-                    // check instance passed in for methods to invoke
+                    // check newInstance passed in for methods to invoke
                     if (InvokeMethod(instance, binder.Name, args, out result))
                         return true;
                 }
@@ -330,7 +341,7 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Property setter implementation tries to retrieve value from instance first then into
+        /// Property setter implementation tries to retrieve value from newInstance first then into
         /// this object
         /// </summary>
         /// <param name="binder"></param>
@@ -387,49 +398,6 @@ namespace Westwind.Utilities.Dynamic
             return false;
         }
 
-        protected virtual void Initialize(object instance)
-        {
-            this.instance = instance;
-            if (instance != null)
-            {
-                instanceType = instance.GetType();
-            }
-        }
-
-        /// <summary>
-        /// Reflection helper method to invoke a method
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <param name="name"></param>
-        /// <param name="args"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        protected bool InvokeMethod(object instance, string name, object[] args, out object result)
-        {
-            if (instance == null)
-            {
-                instance = this;
-            }
-
-            // Look at the instanceType
-            var miArray = instanceType.GetMember(name,
-                                    BindingFlags.InvokeMethod |
-                                    BindingFlags.Public | BindingFlags.Instance);
-
-            if (miArray.Length > 0)
-            {
-                var mi = miArray[0] as MethodInfo;
-                if (mi != null)
-                {
-                    result = mi.Invoke(this.instance, args);
-                    return true;
-                }
-            }
-
-            result = null;
-            return false;
-        }
-
         /// <summary>
         /// Reflection helper method to set a property value
         /// </summary>
@@ -456,15 +424,88 @@ namespace Westwind.Utilities.Dynamic
             }
             return false;
         }
+
+        private void Initialize(object newInstance)
+        {
+            instance = newInstance;
+            if (newInstance != null)
+            {
+                instanceType = newInstance.GetType();
+            }
+        }
+
+        /// <summary>
+        /// Reflection helper method to invoke a method
+        /// </summary>
+        /// <param name="newInstance"></param>
+        /// <param name="name"></param>
+        /// <param name="args"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        private bool InvokeMethod(object newInstance, string name, object[] args, out object result)
+        {
+            if (newInstance == null)
+            {
+                newInstance = this;
+            }
+
+            // Look at the instanceType
+            var miArray = instanceType.GetMember(name,
+                                    BindingFlags.InvokeMethod |
+                                    BindingFlags.Public | BindingFlags.Instance);
+
+            if (miArray.Length > 0)
+            {
+                var mi = miArray[0] as MethodInfo;
+                if (mi != null)
+                {
+                    result = mi.Invoke(newInstance, args);
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
     }
 
-    public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IXmlSerializable
+    [Serializable]
+    public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IXmlSerializable, ISerializable
     {
+        [NonSerialized]
         private readonly DataContractSerializer serializer = new DataContractSerializer(typeof(Dictionary<TKey, TValue>));
+
+        public SerializableDictionary()
+        {
+        }
+
+        protected SerializableDictionary(SerializationInfo info, StreamingContext context)
+        {
+            List<TKey> keys = (List<TKey>)info.GetValue("-=keys=-", typeof(List<TKey>));
+            foreach (var key in keys)
+            {
+                Add(key, (TValue)info.GetValue(key.ToString(), typeof(TValue)));
+            }
+        }
 
         public XmlSchema GetSchema()
         {
             return null;
+        }
+
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            List<TKey> keys = new List<TKey>();
+            foreach (var kvp in this)
+            {
+                keys.Add(kvp.Key);
+            }
+
+            info.AddValue("-=keys=-", keys);
+            foreach (var kvp in this)
+            {
+                info.AddValue(kvp.Key.ToString(), kvp.Value);
+            }
         }
 
         public void ReadXml(XmlReader reader)
