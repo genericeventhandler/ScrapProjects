@@ -73,7 +73,7 @@
     <Rule Id="CA1821" Action="Error" />
     <Rule Id="CA2200" Action="Error" />
     <Rule Id="CA2214" Action="Error" />
-    <Rule Id="CA1024" Action="Warning" />
+    <Rule Id="CA1024" Action="Error" />
   </Rules>
   <Rules AnalyzerId="Desktop.CSharp.Analyzers" RuleNamespace="Desktop.CSharp.Analyzers">
     <Rule Id="CA2153" Action="Error" />
@@ -114,5 +114,8 @@
     <Rule Id="CA1060" Action="Error" />
     <Rule Id="CA1401" Action="Error" />
     <Rule Id="CA2101" Action="Error" />
+  </Rules>
+  <Rules AnalyzerId="CodeCracker.CSharp" RuleNamespace="CodeCracker.CSharp">
+    <Rule Id="CC0022" Action="Error" />
   </Rules>
 </RuleSet>
