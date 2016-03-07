@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Dynamic;
@@ -24,11 +25,6 @@ namespace ScrapProject
     {
         private static void Encode(string filename)
         {
-            var stream = new MemoryStream();
-            stream.WriteByte(100);
-            stream.Seek(0, SeekOrigin.Begin);
-            Console.WriteLine(stream.ReadByte());
-
             using (Bitmap b = new Bitmap("beach.png"))
             {
                 var width = b.Width;
@@ -53,9 +49,6 @@ namespace ScrapProject
                             if (byt >= 0)
                             {
                                 var pixel = b.GetPixel(x, y);
-                                ////var G = (byte) ((int) pixel.G ^ (int) byt);
-                                ////var R = (byte) ((int) pixel.R ^ (int) byt);
-                                ////var B = (byte) ((int) pixel.B ^ (int) byt);
 
                                 G = pixel.G;
                                 r = pixel.R;
@@ -90,9 +83,12 @@ namespace ScrapProject
             apple["Pips"] = 5;
 
             Console.WriteLine("Writing out all properties, dynamic and hardcoded");
+
+            const string outputFormat = "{0}\t\t\t{1}";
+
             foreach (var p in apple.GetProperties(true))
             {
-                Console.WriteLine("{0}\t\t\t{1}", p.Key, p.Value);
+                Console.WriteLine(outputFormat, p.Key, p.Value);
             }
 
             // we can use the property as well.
@@ -146,11 +142,6 @@ namespace Westwind.Utilities.Dynamic
         [NonSerialized]
         private Type instanceType;
 
-        /// <summary>
-        /// String Dictionary that contains the extra dynamic values stored on this object/newInstance
-        /// </summary>
-        /// <remarks>Using PropertyBag to support XML Serialization of the dictionary</remarks>
-        //public PropertyBag properties = new PropertyBag();
         /// <summary>
         /// This constructor just works off the internal dictionary and any public properties of
         /// this object.
@@ -239,12 +230,13 @@ namespace Westwind.Utilities.Dynamic
         /// <summary>
         /// Checks whether a property exists in the Property collection or as a property on the newInstance
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">the key value pair to check.</param>
+        /// <param name="includeInstanceProperties">should we include the instance properties</param>
         /// <returns></returns>
         // ReSharper disable once UnusedMember.Global
         public bool Contains(KeyValuePair<string, object> item, bool includeInstanceProperties = false)
         {
-            bool res = properties.ContainsKey(item.Key);
+            var res = properties.ContainsKey(item.Key);
             if (res)
                 return true;
 
@@ -265,6 +257,7 @@ namespace Westwind.Utilities.Dynamic
         /// <summary>
         /// Returns and the properties of
         /// </summary>
+        /// <param name="includeInstanceProperties">should we include the instance properties</param>
         /// <returns></returns>
         public IEnumerable<KeyValuePair<string, object>> GetProperties(bool includeInstanceProperties = false)
         {
@@ -301,9 +294,9 @@ namespace Westwind.Utilities.Dynamic
                 {
                     return GetProperty(instance, binder.Name, out result);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // ignored
+                    Debug.WriteLine(ex);
                 }
             }
 
@@ -330,9 +323,9 @@ namespace Westwind.Utilities.Dynamic
                     if (InvokeMethod(instance, binder.Name, args, out result))
                         return true;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // ignored
+                    Debug.WriteLine(ex);
                 }
             }
 
@@ -354,13 +347,13 @@ namespace Westwind.Utilities.Dynamic
             {
                 try
                 {
-                    bool result = SetProperty(instance, binder.Name, value);
+                    var result = SetProperty(instance, binder.Name, value);
                     if (result)
                         return true;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // ignored
+                    Debug.WriteLine(ex);
                 }
             }
 
@@ -481,7 +474,7 @@ namespace Westwind.Utilities.Dynamic
 
         protected SerializableDictionary(SerializationInfo info, StreamingContext context)
         {
-            List<TKey> keys = (List<TKey>)info.GetValue("-=keys=-", typeof(List<TKey>));
+            var keys = (List<TKey>)info.GetValue("-=keys=-", typeof(List<TKey>));
             foreach (var key in keys)
             {
                 Add(key, (TValue)info.GetValue(key.ToString(), typeof(TValue)));
@@ -495,7 +488,7 @@ namespace Westwind.Utilities.Dynamic
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            List<TKey> keys = new List<TKey>();
+            var keys = new List<TKey>();
             foreach (var kvp in this)
             {
                 keys.Add(kvp.Key);
@@ -510,7 +503,7 @@ namespace Westwind.Utilities.Dynamic
 
         public void ReadXml(XmlReader reader)
         {
-            Dictionary<TKey, TValue> deserialized = (Dictionary<TKey, TValue>)serializer.ReadObject(reader);
+            var deserialized = (Dictionary<TKey, TValue>)serializer.ReadObject(reader);
             foreach (KeyValuePair<TKey, TValue> kvp in deserialized)
             {
                 Add(kvp.Key, kvp.Value);
