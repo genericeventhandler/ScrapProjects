@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Dynamic;
 using System.IO;
@@ -230,6 +231,9 @@ namespace Westwind.Utilities.Dynamic
         /// Checks whether a property exists in the Property collection or as a property on the instance
         /// </summary>
         /// <param name="item"></param>
+        /// <param name="includeInstanceProperties">
+        /// include the instance properties from the underlying object
+        /// </param>
         /// <returns></returns>
         public bool Contains(KeyValuePair<string, object> item, bool includeInstanceProperties = false)
         {
@@ -290,9 +294,9 @@ namespace Westwind.Utilities.Dynamic
                 {
                     return GetProperty(instance, binder.Name, out result);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // ignored
+                    Debug.WriteLine(ex);
                 }
             }
 
@@ -319,9 +323,10 @@ namespace Westwind.Utilities.Dynamic
                     if (InvokeMethod(instance, binder.Name, args, out result))
                         return true;
                 }
-                catch
+                catch (Exception ex)
                 {
                     // ignored
+                    Debug.WriteLine(ex);
                 }
             }
 
@@ -347,9 +352,10 @@ namespace Westwind.Utilities.Dynamic
                     if (result)
                         return true;
                 }
-                catch
+                catch (Exception ex)
                 {
                     // ignored
+                    Debug.WriteLine(ex);
                 }
             }
 
@@ -469,7 +475,7 @@ namespace Westwind.Utilities.Dynamic
 
         public void ReadXml(XmlReader reader)
         {
-            Dictionary<TKey, TValue> deserialized = (Dictionary<TKey, TValue>)serializer.ReadObject(reader);
+            var deserialized = (Dictionary<TKey, TValue>)serializer.ReadObject(reader);
             foreach (KeyValuePair<TKey, TValue> kvp in deserialized)
             {
                 Add(kvp.Key, kvp.Value);
