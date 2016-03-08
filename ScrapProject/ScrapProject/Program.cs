@@ -34,9 +34,9 @@ namespace ScrapProject
                     var si = new FileInfo(filename);
                     using (var fs = si.OpenRead())
                     {
-                        int x = 0;
-                        int y = 0;
-                        int byt = 0;
+                        var x = 0;
+                        var y = 0;
+                        var byt = 0;
                         while (byt >= 0)
                         {
                             byt = fs.ReadByte();
@@ -83,6 +83,11 @@ namespace ScrapProject
             apple["Size"] = 3.0;
             apple["Pips"] = 5;
 
+            if (args.Length == 2)
+            {
+                apple[args[0]] = args[1];
+            }
+
             Console.WriteLine("Writing out all properties, dynamic and hardcoded");
             foreach (var p in apple.GetProperties(true))
             {
@@ -120,21 +125,16 @@ namespace Westwind.Utilities.Dynamic
     /// Dynamic: dynamic cast allows access to dictionary and native properties/methods
     /// Dictionary: Any of the extended properties are accessible via IDictionary interface
     /// </summary>
-    [Serializable]
     public class Expando : DynamicObject
     {
         private readonly SerializableDictionary<string, object> properties = new SerializableDictionary<string, object>();
 
-        /// <summary>
-        /// instance of object passed in
-        /// </summary>
+        /// <summary>instance of object passed in</summary>
         private object instance;
 
         private PropertyInfo[] instancePropertyInfo;
 
-        /// <summary>
-        /// Cached type of the instance
-        /// </summary>
+        /// <summary>Cached type of the instance</summary>
         private Type instanceType;
 
         /// <summary>
@@ -153,9 +153,7 @@ namespace Westwind.Utilities.Dynamic
             Initialize(this);
         }
 
-        /// <summary>
-        /// Allows passing in an existing instance variable to 'extend'.
-        /// </summary>
+        /// <summary>Allows passing in an existing instance variable to 'extend'.</summary>
         /// <remarks>
         /// You can pass in null here if you don't want to check native properties and only check
         /// the Dictionary!
@@ -230,6 +228,7 @@ namespace Westwind.Utilities.Dynamic
         /// Checks whether a property exists in the Property collection or as a property on the instance
         /// </summary>
         /// <param name="item"></param>
+        /// <param name="includeInstanceProperties">Include the class instance properties?</param>
         /// <returns></returns>
         public bool Contains(KeyValuePair<string, object> item, bool includeInstanceProperties = false)
         {
@@ -251,9 +250,7 @@ namespace Westwind.Utilities.Dynamic
             return false;
         }
 
-        /// <summary>
-        /// Returns and the properties of
-        /// </summary>
+        /// <summary>Returns and the properties of</summary>
         /// <returns></returns>
         public IEnumerable<KeyValuePair<string, object>> GetProperties(bool includeInstanceProperties = false)
         {
@@ -358,9 +355,7 @@ namespace Westwind.Utilities.Dynamic
             return true;
         }
 
-        /// <summary>
-        /// Reflection Helper method to retrieve a property
-        /// </summary>
+        /// <summary>Reflection Helper method to retrieve a property</summary>
         /// <param name="instance"></param>
         /// <param name="name"></param>
         /// <param name="result"></param>
@@ -396,9 +391,7 @@ namespace Westwind.Utilities.Dynamic
             }
         }
 
-        /// <summary>
-        /// Reflection helper method to invoke a method
-        /// </summary>
+        /// <summary>Reflection helper method to invoke a method</summary>
         /// <param name="instance"></param>
         /// <param name="name"></param>
         /// <param name="args"></param>
@@ -430,9 +423,7 @@ namespace Westwind.Utilities.Dynamic
             return false;
         }
 
-        /// <summary>
-        /// Reflection helper method to set a property value
-        /// </summary>
+        /// <summary>Reflection helper method to set a property value</summary>
         /// <param name="instance"></param>
         /// <param name="name"></param>
         /// <param name="value"></param>
