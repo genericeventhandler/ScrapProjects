@@ -24,6 +24,11 @@ namespace DRJ.Utilities
         /// <param name="e">The e.</param>
         public static void OnLogLine(object sender, LogLineEventArgs e)
         {
+            if (sender == null)
+            {
+                throw new ArgumentNullException(nameof(sender), "when calling events pass this as the first parameter");
+            }
+
             if (e.Line.Contains("Error") || e.Line.Contains("Exception"))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
