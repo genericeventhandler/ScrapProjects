@@ -1,1 +1,40 @@
-﻿This is a test document
+﻿	@PART[HeatShield*]:FINAL
+	{
+		//Add decouplers to heatshields
+	
+		sound_vent_large = decouple
+		fx_gasBurst_white = 0.0, 0.0650517, 0.0, 0.0, 1.0, 0.0, decouplefx_gasBurst_white = 0.0, 0.0650517, 0.0, 0.0, 1.0, 0.0, decouple
+		
+		@description ^= :$:. Equiped with integrated decoupler and ultra cool "woosh"-effect! They'll know what hit 'em.:
+	
+		MODULE
+		{
+			name = ModuleDecouple
+			ejectionForce = 40
+			isOmniDecoupler = true
+		}
+	}
+
+	@PART[roverWheel1]
+	{
+		%TechRequired = start
+	}
+
+	@PART[*]:HAS[@MODULE[ModuleWheel],!MODULE[ModuleLandingGear]]:FINAL
+	{
+	
+		@description ^= :$: Finally featuring extra strong rims for high overland speeds without the need to carry a dozen sparewheels.:
+		%PhysicsSignificance = 1
+		
+		@MODULE[ModuleWheel]
+		{
+			%impactTolerance = 1000
+			%overSpeedDamage = 1000
+		}
+	}
+
+	$PART[launchClamp1] // Copy the launch clamp
+	{
+		@name = [launchClamp2]
+		@rescaleFactor = 2
+	}
