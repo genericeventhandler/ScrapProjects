@@ -1,4 +1,8 @@
-﻿namespace DRJ.Utilities
+﻿// <copyright file="LogWatcher.cs" company="GenericEventHandler">
+//     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
+// </copyright>
+
+namespace DRJ.Utilities
 {
     using System;
     using System.IO;
@@ -87,7 +91,7 @@
                 {
                     logReader.Seek(this.lastOffset, SeekOrigin.Begin);
                     var sr = new StreamReader(logReader);
-                    logReader.Seek(lastOffset, SeekOrigin.Begin);
+                    logReader.Seek(this.lastOffset, SeekOrigin.Begin);
                     var line = sr.ReadLine();
                     while (!string.IsNullOrEmpty(line))
                     {

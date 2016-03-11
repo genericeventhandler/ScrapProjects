@@ -1,16 +1,15 @@
-﻿using System;
+﻿// <copyright file="Program.cs" company="GenericEventHandler">
+//     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
+// </copyright>
+
+using System;
 using System.Drawing;
 using System.IO;
 using Westwind.Utilities.Dynamic;
 
 namespace ScrapProject
 {
-    public class Fruit : Expando
-    {
-        public string Color { get; set; }
-        public string Name { get; set; }
-    }
-
+    /// <summary>The main program for the scrap project</summary>
     internal static class Program
     {
         private static void Encode(string filename)
@@ -32,20 +31,20 @@ namespace ScrapProject
                         while (byt >= 0)
                         {
                             byt = fs.ReadByte();
-                            byte G;
-                            byte r;
-                            byte B;
+                            byte green;
+                            byte red;
+                            byte blue;
                             int a;
                             if (byt >= 0)
                             {
                                 var pixel = b.GetPixel(x, y);
 
-                                G = pixel.G;
-                                r = pixel.R;
-                                B = pixel.B;
+                                green = pixel.G;
+                                red = pixel.R;
+                                blue = pixel.B;
                                 a = 255 - pixel.A;
 
-                                b.SetPixel(x, y, Color.FromArgb(a, Color.FromArgb(r, G, B)));
+                                b.SetPixel(x, y, Color.FromArgb(a, Color.FromArgb(red, green, blue)));
                                 x = x + 2;
                                 if (x >= width)
                                 {
@@ -85,7 +84,6 @@ namespace ScrapProject
             }
 
             // we can use the property as well.
-
             dynamic appleX = apple;
             Console.WriteLine("By casting to dynamic we can access apple.Pips " + appleX.Pips);
 

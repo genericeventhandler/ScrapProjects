@@ -1,3 +1,7 @@
+// <copyright file="Expando.cs" company="GenericEventHandler">
+//     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
+// </copyright>
+
 using System.Diagnostics;
 
 namespace Westwind.Utilities.Dynamic
@@ -30,31 +34,40 @@ namespace Westwind.Utilities.Dynamic
         private Type instanceType;
 
         /// <summary>
-        /// This constructor just works off the internal dictionary and any public properties of
-        /// this object. Note you can subclass Expando.
+        /// Initializes a new instance of the <see cref="Expando"/> class. This constructor just
+        /// works off the internal dictionary and any public properties of this object. Note you can
+        /// subclass Expando.
         /// </summary>
         protected Expando()
         {
-            Initialize(this);
+            this.Initialize(this);
         }
 
-        /// <summary>Allows passing in an existing instance variable to 'extend'.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Expando"/> class. Allows passing in an
+        /// existing instance variable to 'extend'.
+        /// </summary>
         /// <remarks>
         /// You can pass in null here if you don't want to check native properties and only check
         /// the Dictionary!
         /// </remarks>
-        /// <param name="instance"></param>
+        /// <param name="instance">instance</param>
         protected Expando(object instance)
         {
-            Initialize(instance);
+            this.Initialize(instance);
         }
 
         private PropertyInfo[] InstancePropertyInfo
         {
             get
             {
-                if (instancePropertyInfo == null && instance != null)
-                    instancePropertyInfo = instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                if (this.instancePropertyInfo == null && instance != null)
+                {
+                    instancePropertyInfo =
+                        instance.GetType()
+                            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                }
+
                 return instancePropertyInfo;
             }
         }
@@ -68,8 +81,8 @@ namespace Westwind.Utilities.Dynamic
         /// The getter checks the properties dictionary first then looks in PropertyInfo for
         /// properties. The setter checks the instance properties before checking the properties dictionary.
         /// </remarks>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">the property name</param>
+        /// <returns>the value of the property</returns>
         public object this[string key]
         {
             get
@@ -83,13 +96,16 @@ namespace Westwind.Utilities.Dynamic
                 {
                     // try reflection on instanceType
                     object result;
-                    if (GetProperty(instance, key, out result))
+                    if (GetProperty(key, out result))
+                    {
                         return result;
+                    }
 
                     // nope doesn't exist
                     throw;
                 }
             }
+
             set
             {
                 if (properties.ContainsKey(key))
@@ -101,23 +117,29 @@ namespace Westwind.Utilities.Dynamic
                 // check instance for existance of type first
                 var miArray = instanceType.GetMember(key, BindingFlags.Public | BindingFlags.GetProperty);
                 if (miArray.Length > 0)
-                    SetProperty(instance, key, value);
+                {
+                    SetProperty(key, value);
+                }
                 else
+                {
                     properties[key] = value;
+                }
             }
         }
 
         /// <summary>
         /// Checks whether a property exists in the Property collection or as a property on the instance
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">the item to check if it exists</param>
         /// <param name="includeInstanceProperties">Include the class instance properties?</param>
-        /// <returns></returns>
+        /// <returns>true if the dictionary contains the key</returns>
         public bool Contains(KeyValuePair<string, object> item, bool includeInstanceProperties = false)
         {
             var res = properties.ContainsKey(item.Key);
             if (res)
+            {
                 return true;
+            }
 
             if (includeInstanceProperties && instance != null)
             {
@@ -135,26 +157,30 @@ namespace Westwind.Utilities.Dynamic
 
         /// <summary>Returns and the properties of</summary>
         /// <param name="includeInstanceProperties">include the instance properties in the definition</param>
-        /// <returns></returns>
+        /// <returns>an IEnumerable key pair</returns>
         public IEnumerable<KeyValuePair<string, object>> GetProperties(bool includeInstanceProperties = false)
         {
             if (includeInstanceProperties && instance != null)
             {
                 foreach (var prop in InstancePropertyInfo)
+                {
                     yield return new KeyValuePair<string, object>(prop.Name, prop.GetValue(instance, null));
+                }
             }
 
             foreach (var key in properties.Keys)
+            {
                 yield return new KeyValuePair<string, object>(key, properties[key]);
+            }
         }
 
         /// <summary>
         /// Try to retrieve a member by name first from instance properties followed by the
         /// collection entries.
         /// </summary>
-        /// <param name="binder"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
+        /// <param name="binder">the member binder</param>
+        /// <param name="result">the out result</param>
+        /// <returns>true if the member exists</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             // first check the properties collection for member
@@ -169,7 +195,7 @@ namespace Westwind.Utilities.Dynamic
             {
                 try
                 {
-                    return GetProperty(instance, binder.Name, out result);
+                    return GetProperty(binder.Name, out result);
                 }
                 catch (Exception ex)
                 {
@@ -187,10 +213,10 @@ namespace Westwind.Utilities.Dynamic
         /// Dynamic invocation method. Currently allows only for Reflection based operation (no
         /// ability to add methods dynamically).
         /// </summary>
-        /// <param name="binder"></param>
-        /// <param name="args"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
+        /// <param name="binder">the member binder</param>
+        /// <param name="args">the arguments</param>
+        /// <param name="result">the result</param>
+        /// <returns>did the invoke work correctly</returns>
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
             if (instance != null)
@@ -198,8 +224,10 @@ namespace Westwind.Utilities.Dynamic
                 try
                 {
                     // check instance passed in for methods to invoke
-                    if (InvokeMethod(instance, binder.Name, args, out result))
+                    if (InvokeMethod(binder.Name, args, out result))
+                    {
                         return true;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -216,9 +244,9 @@ namespace Westwind.Utilities.Dynamic
         /// Property setter implementation tries to retrieve value from instance first then into
         /// this object
         /// </summary>
-        /// <param name="binder"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="binder">the member binder</param>
+        /// <param name="value">the value to set</param>
+        /// <returns>returns true if the value was set</returns>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
             // first check to see if there's a native property to set
@@ -226,9 +254,11 @@ namespace Westwind.Utilities.Dynamic
             {
                 try
                 {
-                    var result = SetProperty(instance, binder.Name, value);
+                    var result = SetProperty(binder.Name, value);
                     if (result)
+                    {
                         return true;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -243,17 +273,11 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>Reflection Helper method to retrieve a property</summary>
-        /// <param name="instance"></param>
-        /// <param name="name"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        protected bool GetProperty(object instance, string name, out object result)
+        /// <param name="name">the name of the property</param>
+        /// <param name="result">the result as an out parameter</param>
+        /// <returns>true if property is returned.</returns>
+        protected bool GetProperty(string name, out object result)
         {
-            if (instance == null)
-            {
-                instance = this;
-            }
-
             var miArray = instanceType.GetMember(name, BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.Instance);
             if (miArray.Length > 0)
             {
@@ -270,18 +294,12 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>Reflection helper method to invoke a method</summary>
-        /// <param name="newInstance"></param>
-        /// <param name="name"></param>
-        /// <param name="args"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        protected bool InvokeMethod(object newInstance, string name, object[] args, out object result)
+        /// <param name="name">the name of the method</param>
+        /// <param name="args">the arguments to pass</param>
+        /// <param name="result">the result</param>
+        /// <returns>true if executed</returns>
+        protected bool InvokeMethod(string name, object[] args, out object result)
         {
-            if (newInstance == null)
-            {
-                instance = this;
-            }
-
             // Look at the instanceType
             var miArray = instanceType.GetMember(
                 name,
@@ -311,17 +329,11 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>Reflection helper method to set a property value</summary>
-        /// <param name="newInstance"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private bool SetProperty(object newInstance, string name, object value)
+        /// <param name="name">the name of the property</param>
+        /// <param name="value">the value to set</param>
+        /// <returns>true if set</returns>
+        private bool SetProperty(string name, object value)
         {
-            if (newInstance == null)
-            {
-                instance = this;
-            }
-
             var miArray = instanceType.GetMember(name, BindingFlags.Public | BindingFlags.SetProperty | BindingFlags.Instance);
             if (miArray.Length > 0)
             {
@@ -332,6 +344,7 @@ namespace Westwind.Utilities.Dynamic
                     return true;
                 }
             }
+
             return false;
         }
     }

@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// <copyright file="LogConsoleWatcher.cs" company="GenericEventHandler">
+//     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
+// </copyright>
 namespace DRJ.Utilities
 {
+    using System;
+
+    /// <summary>
+    /// watches a log file in the console screen without having to refresh it all the time.
+    /// </summary>
     public static class LogConsoleWatcher
     {
         /// <summary>The main.</summary>
