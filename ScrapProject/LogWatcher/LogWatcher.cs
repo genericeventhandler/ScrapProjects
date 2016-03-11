@@ -53,7 +53,7 @@ namespace DRJ.Utilities
             Console.WriteLine("Stopped");
         }
 
-        /// <summary>The stop.</summary>
+        /// <summary>Stops the log watcher</summary>
         public void Stop()
         {
             Console.WriteLine("Stop called");

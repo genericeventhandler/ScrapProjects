@@ -38,6 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\LogWatcher.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>LogWatcher.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -47,6 +48,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>LogWatcher.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>DRJ.Utilities.LogConsoleWatcher</StartupObject>
@@ -72,6 +74,7 @@
       <Link>stylecop.json</Link>
     </AdditionalFiles>
     <None Include="App.config" />
+    <None Include="LogWatcher.ruleset" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
