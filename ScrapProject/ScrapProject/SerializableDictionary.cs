@@ -2,15 +2,17 @@
 //     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
 // </copyright>
 
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-
 namespace Westwind.Utilities.Dynamic
 {
-    /// <summary>A serializable Dictionary that can be serialized to xml</summary>
+    using System.Collections.Generic;
+    using System.Runtime.Serialization;
+    using System.Xml;
+    using System.Xml.Schema;
+    using System.Xml.Serialization;
+
+    /// <summary>
+    /// A serializable Dictionary that can be serialized to xml
+    /// </summary>
     /// <typeparam name="TKey">the type of key, usually string</typeparam>
     /// <typeparam name="TValue">the type of object to save.</typeparam>
     public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IXmlSerializable
