@@ -96,7 +96,7 @@ namespace ScrapProject
             Console.Write("We can also access like this apple[\"Pips\"] " + apple["Pips"]);
             Console.Write("And access the hard coded as well apple[\"Name\"] " + apple["Name"]);
             Console.WriteLine("=== Waiting for asyncs to finish. ===");
-            
+
             asyncCall.WaitAndDispose();
         }
     }

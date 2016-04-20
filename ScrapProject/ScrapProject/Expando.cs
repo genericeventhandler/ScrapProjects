@@ -108,21 +108,21 @@ namespace Westwind.Utilities.Dynamic
 
             set
             {
-                if (properties.ContainsKey(key))
+                if (this.properties.ContainsKey(key))
                 {
-                    properties[key] = value;
+                    this.properties[key] = value;
                     return;
                 }
 
                 // check instance for existance of type first
-                var miArray = instanceType.GetMember(key, BindingFlags.Public | BindingFlags.GetProperty);
+                var miArray = this.instanceType.GetMember(key, BindingFlags.Public | BindingFlags.GetProperty);
                 if (miArray.Length > 0)
                 {
                     SetProperty(key, value);
                 }
                 else
                 {
-                    properties[key] = value;
+                    this.properties[key] = value;
                 }
             }
         }
@@ -131,11 +131,21 @@ namespace Westwind.Utilities.Dynamic
         /// Checks whether a property exists in the Property collection or as a property on the instance
         /// </summary>
         /// <param name="item">the item to check if it exists</param>
+        /// <returns>true if the dictionary contains the key</returns>
+        public bool Contains(KeyValuePair<string, object> item)
+        {
+            return Contains(item, false);
+        }
+
+        /// <summary>
+        /// Checks whether a property exists in the Property collection or as a property on the instance
+        /// </summary>
+        /// <param name="item">the item to check if it exists</param>
         /// <param name="includeInstanceProperties">Include the class instance properties?</param>
         /// <returns>true if the dictionary contains the key</returns>
-        public bool Contains(KeyValuePair<string, object> item, bool includeInstanceProperties = false)
+        public bool Contains(KeyValuePair<string, object> item, bool includeInstanceProperties)
         {
-            var res = properties.ContainsKey(item.Key);
+            var res = this.properties.ContainsKey(item.Key);
             if (res)
             {
                 return true;
@@ -156,9 +166,16 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>Returns and the properties of</summary>
+        /// <returns>an IEnumerable key pair</returns>
+        public IEnumerable<KeyValuePair<string, object>> GetProperties()
+        {
+            return GetProperties(false);
+        }
+
+        /// <summary>Returns and the properties of</summary>
         /// <param name="includeInstanceProperties">include the instance properties in the definition</param>
         /// <returns>an IEnumerable key pair</returns>
-        public IEnumerable<KeyValuePair<string, object>> GetProperties(bool includeInstanceProperties = false)
+        public IEnumerable<KeyValuePair<string, object>> GetProperties(bool includeInstanceProperties)
         {
             if (includeInstanceProperties && instance != null)
             {
