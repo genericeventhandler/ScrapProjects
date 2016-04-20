@@ -66,6 +66,8 @@ namespace ScrapProject
 
         private static void Main(string[] args)
         {
+            var asyncCall = new Action(ExtensionMethods.TestAysnc).ExecuteAsync();
+
             Encode(@"temp.txt");
             var apple = new Fruit { Name = "Granny smith", Color = "Green" };
             apple["Size"] = 3.0;
@@ -93,7 +95,9 @@ namespace ScrapProject
                           appleX.Color);
             Console.Write("We can also access like this apple[\"Pips\"] " + apple["Pips"]);
             Console.Write("And access the hard coded as well apple[\"Name\"] " + apple["Name"]);
-            Console.ReadKey();
+            Console.WriteLine("=== Waiting for asyncs to finish. ===");
+            
+            asyncCall.WaitAndDispose();
         }
     }
 }
