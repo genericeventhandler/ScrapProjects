@@ -1,15 +1,16 @@
 ﻿// <copyright file="Program.cs" company="GenericEventHandler">
 //     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
 // </copyright>
-
-using System;
-using System.Drawing;
-using System.IO;
-using Westwind.Utilities.Dynamic;
-
 namespace ScrapProject
 {
-    /// <summary>The main program for the scrap project</summary>
+    using System;
+    using System.Drawing;
+    using System.IO;
+    using Westwind.Utilities.Dynamic;
+
+    /// <summary>
+    /// The main program for the scrap project
+    /// </summary>
     internal static class Program
     {
         private static void Encode(string filename)

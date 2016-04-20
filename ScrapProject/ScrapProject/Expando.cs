@@ -1,13 +1,11 @@
 // <copyright file="Expando.cs" company="GenericEventHandler">
 //     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
 // </copyright>
-
-using System.Diagnostics;
-
 namespace Westwind.Utilities.Dynamic
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Dynamic;
     using System.Linq;
     using System.Reflection;
@@ -25,12 +23,16 @@ namespace Westwind.Utilities.Dynamic
     {
         private readonly SerializableDictionary<string, object> properties = new SerializableDictionary<string, object>();
 
-        /// <summary>instance of object passed in</summary>
+        /// <summary>
+        /// instance of object passed in
+        /// </summary>
         private object instance;
 
         private PropertyInfo[] instancePropertyInfo;
 
-        /// <summary>Cached type of the instance</summary>
+        /// <summary>
+        /// Cached type of the instance
+        /// </summary>
         private Type instanceType;
 
         /// <summary>
@@ -289,7 +291,9 @@ namespace Westwind.Utilities.Dynamic
             return true;
         }
 
-        /// <summary>Reflection Helper method to retrieve a property</summary>
+        /// <summary>
+        /// Reflection Helper method to retrieve a property
+        /// </summary>
         /// <param name="name">the name of the property</param>
         /// <param name="result">the result as an out parameter</param>
         /// <returns>true if property is returned.</returns>
@@ -310,7 +314,9 @@ namespace Westwind.Utilities.Dynamic
             return false;
         }
 
-        /// <summary>Reflection helper method to invoke a method</summary>
+        /// <summary>
+        /// Reflection helper method to invoke a method
+        /// </summary>
         /// <param name="name">the name of the method</param>
         /// <param name="args">the arguments to pass</param>
         /// <param name="result">the result</param>
@@ -345,7 +351,9 @@ namespace Westwind.Utilities.Dynamic
             }
         }
 
-        /// <summary>Reflection helper method to set a property value</summary>
+        /// <summary>
+        /// Reflection helper method to set a property value
+        /// </summary>
         /// <param name="name">the name of the property</param>
         /// <param name="value">the value to set</param>
         /// <returns>true if set</returns>
