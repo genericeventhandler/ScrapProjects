@@ -62,6 +62,7 @@ namespace ScrapProject
         {
             var t1 = new Func<string>(() =>
             {
+                Console.WriteLine("Running task 1");
                 var x = "aaa";
                 System.Threading.Thread.Sleep(1000);
                 Console.WriteLine("Update from within method aysnc " + x);
@@ -71,6 +72,7 @@ namespace ScrapProject
 
             var t2 = new Func<string>(() =>
             {
+                Console.WriteLine("Running task 2");
                 var x = "bbb";
                 System.Threading.Thread.Sleep(500);
                 Console.WriteLine("Update from within method aysnc " + x);
@@ -80,6 +82,7 @@ namespace ScrapProject
 
             var t3 = new Func<string>(() =>
             {
+                Console.WriteLine("Running task 3");
                 var x = "ccc";
                 System.Threading.Thread.Sleep(1500);
                 Console.WriteLine("Update from within method aysnc " + x);
@@ -111,6 +114,7 @@ namespace ScrapProject
         /// <returns>the string ddd</returns>
         public static string TryIt()
         {
+            Console.WriteLine("Running task 4");
             var x = "ddd";
             System.Threading.Thread.Sleep(1700);
             Console.WriteLine("Update from within method aysnc " + x);
@@ -131,6 +135,7 @@ namespace ScrapProject
 
         private static string TryIt2(string x)
         {
+            Console.WriteLine("Running task 5");
             System.Threading.Thread.Sleep(100);
             Console.WriteLine("Tryit2");
             return x + " !!!";
@@ -138,6 +143,7 @@ namespace ScrapProject
 
         private static string TryIt3(MyObject ob)
         {
+            Console.WriteLine("Running task 6");
             Console.WriteLine(ob);
             return ob.ToString();
         }
