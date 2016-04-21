@@ -95,10 +95,16 @@ namespace ScrapProject
             Console.Write("We can access the hard coded properties as well via dynamic Name " + appleX.Name + " and Color " +
                           appleX.Color);
             Console.Write("We can also access like this apple[\"Pips\"] " + apple["Pips"]);
-            Console.Write("And access the hard coded as well apple[\"Name\"] " + apple["Name"]);
+            Console.WriteLine("And access the hard coded as well apple[\"Name\"] " + apple["Name"]);
             Console.WriteLine("=== Waiting for asyncs to finish. ===");
 
             asyncCall.WaitAndDispose();
+
+            DateTime start = DateTime.Now;
+            string path = DirectoryHelper.FindFile("Fruit.cs");
+            Console.WriteLine("Found: " + path + " in " + DateTime.Now.Subtract(start).TotalMilliseconds + " ms");
+            Console.WriteLine("---press any key---");
+            Console.ReadKey();
         }
     }
 }
