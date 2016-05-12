@@ -1,13 +1,15 @@
 ﻿// <copyright file="ExtensionMethods.cs" company="GenericEventHandler">
 //     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
 // </copyright>
-
-using System;
-using System.Threading.Tasks;
-
 namespace ScrapProject
 {
-    /// <summary>Extension methods and test methods for Executing methods async</summary>
+    using System;
+    using System.Globalization;
+    using System.Threading.Tasks;
+
+    /// <summary>
+    /// Extension methods and test methods for Executing methods async
+    /// </summary>
     public static class ExtensionMethods
     {
         /// <summary>
@@ -23,7 +25,9 @@ namespace ScrapProject
             return t;
         }
 
-        /// <summary>Executes a void Action</summary>
+        /// <summary>
+        /// Executes a void Action
+        /// </summary>
         /// <param name="methodToExecute">the action to execute</param>
         /// <returns>the task that is executing</returns>
         public static Task ExecuteAsync(this Action methodToExecute)
@@ -33,7 +37,9 @@ namespace ScrapProject
             return t;
         }
 
-        /// <summary>Executes a method with a parameter passed</summary>
+        /// <summary>
+        /// Executes a method with a parameter passed
+        /// </summary>
         /// <typeparam name="T">The type of parameter passed to the method</typeparam>
         /// <typeparam name="TResult">the result of the method</typeparam>
         /// <param name="methodToExecute">the method to execute</param>
@@ -41,12 +47,19 @@ namespace ScrapProject
         /// <returns>A task that is running</returns>
         public static Task<TResult> ExecuteAsync<T, TResult>(this Func<T, TResult> methodToExecute, T parameter)
         {
+            if (methodToExecute == null)
+            {
+                throw new ArgumentNullException(nameof(methodToExecute));
+            }
+
             var t = new Task<TResult>(() => methodToExecute(parameter));
             t.Start();
             return t;
         }
 
-        /// <summary>Gets the result from the task and disposes the task</summary>
+        /// <summary>
+        /// Gets the result from the task and disposes the task
+        /// </summary>
         /// <typeparam name="T">the type of return parameter from the task</typeparam>
         /// <param name="task">the task that is executing</param>
         /// <returns>T the return type of the task.</returns>
@@ -57,15 +70,17 @@ namespace ScrapProject
             return result;
         }
 
-        /// <summary>Test the Task execution</summary>
+        /// <summary>
+        /// Test the Task execution
+        /// </summary>
         public static void TestAysnc()
         {
             var t1 = new Func<string>(() =>
             {
                 Console.WriteLine("Running task 1");
-                var x = "aaa";
+                const string x = "aaa";
                 System.Threading.Thread.Sleep(1000);
-                Console.WriteLine("Update from within method aysnc " + x);
+                Console.WriteLine($"Update from within method aysnc {x} ");
                 System.Threading.Thread.Sleep(2000);
                 return x;
             }).ExecuteAsync();
@@ -73,9 +88,9 @@ namespace ScrapProject
             var t2 = new Func<string>(() =>
             {
                 Console.WriteLine("Running task 2");
-                var x = "bbb";
+                const string x = "bbb";
                 System.Threading.Thread.Sleep(500);
-                Console.WriteLine("Update from within method aysnc " + x);
+                Console.WriteLine($"Update from within method aysnc {x}");
                 System.Threading.Thread.Sleep(3000);
                 return x;
             }).ExecuteAsync();
@@ -83,9 +98,9 @@ namespace ScrapProject
             var t3 = new Func<string>(() =>
             {
                 Console.WriteLine("Running task 3");
-                var x = "ccc";
+                const string x = "ccc";
                 System.Threading.Thread.Sleep(1500);
-                Console.WriteLine("Update from within method aysnc " + x);
+                Console.WriteLine($"Update from within method aysnc {x} ");
                 System.Threading.Thread.Sleep(4000);
                 return x;
             }).ExecuteAsync();
@@ -106,23 +121,27 @@ namespace ScrapProject
             for (int loop = 4; loop >= 0; loop--)
             {
                 System.Threading.Thread.Sleep(1000);
-                Console.Write("." + loop);
+                Console.Write(".{0}", loop.ToString());
             }
         }
 
-        /// <summary>A method that writes to the console and fakes some action</summary>
+        /// <summary>
+        /// A method that writes to the console and fakes some action
+        /// </summary>
         /// <returns>the string ddd</returns>
         public static string TryIt()
         {
             Console.WriteLine("Running task 4");
-            var x = "ddd";
+            const string x = "ddd";
             System.Threading.Thread.Sleep(1700);
-            Console.WriteLine("Update from within method aysnc " + x);
+            Console.WriteLine("Update from within method aysnc {0}", x);
             System.Threading.Thread.Sleep(5000);
             return x;
         }
 
-        /// <summary>Waits for the task to complete and then disposes it.</summary>
+        /// <summary>
+        /// Waits for the task to complete and then disposes it.
+        /// </summary>
         /// <param name="task">the task that is executing</param>
         public static void WaitAndDispose(this Task task)
         {
@@ -138,7 +157,7 @@ namespace ScrapProject
             Console.WriteLine("Running task 5");
             System.Threading.Thread.Sleep(100);
             Console.WriteLine("Tryit2");
-            return x + " !!!";
+            return string.Format(CultureInfo.InvariantCulture, "{0} !!!", x);
         }
 
         private static string TryIt3(MyObject ob)
@@ -150,17 +169,23 @@ namespace ScrapProject
 
         private class MyObject
         {
-            /// <summary>Gets or sets the first name</summary>
+            /// <summary>
+            /// Gets or sets the first name
+            /// </summary>
             internal string FirstName { get; set; }
 
-            /// <summary>Gets or sets the name</summary>
+            /// <summary>
+            /// Gets or sets the name
+            /// </summary>
             internal string Name { get; set; }
 
-            /// <summary>Concatinates name and firstname</summary>
+            /// <summary>
+            /// Concatinates name and firstname
+            /// </summary>
             /// <returns>the string representation of the class.</returns>
             public override string ToString()
             {
-                return Name + " " + FirstName;
+                return string.Concat(this.Name, " ", this.FirstName);
             }
         }
     }

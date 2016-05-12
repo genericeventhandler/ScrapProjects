@@ -5,8 +5,9 @@ namespace ScrapProject
 {
     using System;
     using System.Drawing;
+    using System.Globalization;
     using System.IO;
-    using Westwind.Utilities.Dynamic;
+    using System.Linq;
 
     /// <summary>
     /// The main program for the scrap project
@@ -61,7 +62,7 @@ namespace ScrapProject
                     }
                 }
 
-                b.Save(filename + ".x.png", System.Drawing.Imaging.ImageFormat.Png);
+                b.Save(string.Format(CultureInfo.CurrentCulture, "{0}.x.png", filename), System.Drawing.Imaging.ImageFormat.Png);
             }
         }
 
@@ -81,28 +82,30 @@ namespace ScrapProject
 
             Console.WriteLine("Writing out all properties, dynamic and hardcoded");
             const string outputFormat = "{0}\t\t\t{1}";
-            foreach (var p in apple.GetProperties(true))
+            var ps = apple.GetProperties(true).ToArray();
+            if (ps != null)
             {
-                Console.WriteLine(outputFormat, p.Key, p.Value);
+                foreach (var p in ps)
+                {
+                    Console.WriteLine(outputFormat, p.Key, p.Value);
+                }
             }
 
             // we can use the property as well.
             dynamic appleX = apple;
-            Console.WriteLine("By casting to dynamic we can access apple.Pips " + appleX.Pips);
+            Console.WriteLine("By casting to dynamic we can access apple.Pips {0}", appleX.Pips);
 
-            Console.Write("We can access the hard coded properties as well Name " + apple.Name + " and Color " +
-                          apple.Color);
-            Console.Write("We can access the hard coded properties as well via dynamic Name " + appleX.Name + " and Color " +
-                          appleX.Color);
-            Console.Write("We can also access like this apple[\"Pips\"] " + apple["Pips"]);
-            Console.WriteLine("And access the hard coded as well apple[\"Name\"] " + apple["Name"]);
+            Console.Write("We can access the hard coded properties as well Name {0} and Color {1}", apple.Name, apple.Color);
+            Console.Write("We can access the hard coded properties as well via dynamic Name {0} and Color {1} ", appleX.Name, appleX.Color);
+            Console.Write("We can also access like this apple[\"Pips\"] {0}", apple["Pips"]);
+            Console.WriteLine("And access the hard coded as well apple[\"Name\"] {0}", apple["Name"]);
             Console.WriteLine("=== Waiting for asyncs to finish. ===");
 
             asyncCall.WaitAndDispose();
 
-            DateTime start = DateTime.Now;
-            string path = DirectoryHelper.FindFile("Fruit.cs");
-            Console.WriteLine("Found: " + path + " in " + DateTime.Now.Subtract(start).TotalMilliseconds + " ms");
+            var start = DateTime.Now;
+            var path = DirectoryHelper.FindFile("Fruit.cs");
+            Console.WriteLine("Found: {0} in {1} ms", path, DateTime.Now.Subtract(start).TotalMilliseconds.ToString());
             Console.WriteLine("---press any key---");
             Console.ReadKey();
         }

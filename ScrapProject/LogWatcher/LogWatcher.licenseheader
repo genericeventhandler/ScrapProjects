@@ -1,0 +1,10 @@
+﻿extensions: designer.cs generated.cs
+extensions: .cs .cpp .h
+// <copyright file="%FileName%" company="GenericEventHandler">
+//     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
+// </copyright>
+extensions: .aspx .ascx
+<%-- 
+// %FileName%
+//     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
+--%>

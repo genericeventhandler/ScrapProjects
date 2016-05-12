@@ -68,7 +68,16 @@
     <Rule Id="CA2241" Action="Warning" />
     <Rule Id="CA2242" Action="Warning" />
   </Rules>
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <Rule Id="SA1101" Action="Error" />
+  </Rules>
+  <Rules AnalyzerId="ClrHeapAllocationAnalyzer" RuleNamespace="ClrHeapAllocationAnalyzer">
+    <Rule Id="HeapAnalyzerImplicitParamsRule" Action="None" />
+    <Rule Id="HeapAnalyzerExplicitNewObjectRule" Action="None" />
+    <Rule Id="HeapAnalyzerClosureCaptureRule" Action="None" />
+  </Rules>
   <Rules AnalyzerId="CodeCracker.CSharp" RuleNamespace="CodeCracker.CSharp">
-    <Rule Id="CC0084" Action="Warning" />
+    <Rule Id="CC0061" Action="Error" />
+    <Rule Id="CC0095" Action="None" />
   </Rules>
 </RuleSet>

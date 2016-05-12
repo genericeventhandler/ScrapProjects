@@ -104,6 +104,7 @@ namespace DRJ.Utilities
                     if (sr != null)
                     {
                         sr.Dispose();
+                        sr = null;
                     }
                 }
 

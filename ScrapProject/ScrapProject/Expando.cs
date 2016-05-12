@@ -50,8 +50,7 @@ namespace Westwind.Utilities.Dynamic
         /// existing instance variable to 'extend'.
         /// </summary>
         /// <remarks>
-        /// You can pass in null here if you don't want to check native properties and only check
-        /// the Dictionary!
+        /// You can pass in null here if you don't want to check native properties and only check the Dictionary!
         /// </remarks>
         /// <param name="instance">instance</param>
         protected Expando(object instance)
@@ -63,21 +62,21 @@ namespace Westwind.Utilities.Dynamic
         {
             get
             {
-                if (this.instancePropertyInfo == null && instance != null)
+                if (this.instancePropertyInfo == null && this.instance != null)
                 {
-                    instancePropertyInfo =
-                        instance.GetType()
+                    this.instancePropertyInfo =
+                        this.instance.GetType()
                             .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
                 }
 
-                return instancePropertyInfo;
+                return this.instancePropertyInfo;
             }
         }
 
         /// <summary>
         /// Convenience method that provides a string Indexer to the properties collection AND the
-        /// strongly typed properties of the object by name. // dynamic exp["Address"] = "112
-        /// nowhere lane"; // strong var name = exp["StronglyTypedProperty"] as string;
+        /// strongly typed properties of the object by name. // dynamic exp["Address"] = "112 nowhere
+        /// lane"; // strong var name = exp["StronglyTypedProperty"] as string;
         /// </summary>
         /// <remarks>
         /// The getter checks the properties dictionary first then looks in PropertyInfo for
@@ -92,13 +91,13 @@ namespace Westwind.Utilities.Dynamic
                 try
                 {
                     // try to get from properties collection first
-                    return properties[key];
+                    return this.properties[key];
                 }
                 catch (KeyNotFoundException)
                 {
                     // try reflection on instanceType
                     object result;
-                    if (GetProperty(key, out result))
+                    if (this.GetProperty(key, out result))
                     {
                         return result;
                     }
@@ -120,7 +119,7 @@ namespace Westwind.Utilities.Dynamic
                 var miArray = this.instanceType.GetMember(key, BindingFlags.Public | BindingFlags.GetProperty);
                 if (miArray.Length > 0)
                 {
-                    SetProperty(key, value);
+                    this.SetProperty(key, value);
                 }
                 else
                 {
@@ -136,7 +135,7 @@ namespace Westwind.Utilities.Dynamic
         /// <returns>true if the dictionary contains the key</returns>
         public bool Contains(KeyValuePair<string, object> item)
         {
-            return Contains(item, false);
+            return this.Contains(item, false);
         }
 
         /// <summary>
@@ -153,9 +152,9 @@ namespace Westwind.Utilities.Dynamic
                 return true;
             }
 
-            if (includeInstanceProperties && instance != null)
+            if (includeInstanceProperties && this.instance != null)
             {
-                foreach (var prop in InstancePropertyInfo)
+                foreach (var prop in this.InstancePropertyInfo)
                 {
                     if (prop.Name == item.Key)
                     {
@@ -167,29 +166,33 @@ namespace Westwind.Utilities.Dynamic
             return false;
         }
 
-        /// <summary>Returns and the properties of</summary>
+        /// <summary>
+        /// Returns and the properties of
+        /// </summary>
         /// <returns>an IEnumerable key pair</returns>
         public IEnumerable<KeyValuePair<string, object>> GetProperties()
         {
-            return GetProperties(false);
+            return this.GetProperties(false);
         }
 
-        /// <summary>Returns and the properties of</summary>
+        /// <summary>
+        /// Returns and the properties of
+        /// </summary>
         /// <param name="includeInstanceProperties">include the instance properties in the definition</param>
         /// <returns>an IEnumerable key pair</returns>
         public IEnumerable<KeyValuePair<string, object>> GetProperties(bool includeInstanceProperties)
         {
-            if (includeInstanceProperties && instance != null)
+            if (includeInstanceProperties && this.instance != null)
             {
-                foreach (var prop in InstancePropertyInfo)
+                foreach (var prop in this.InstancePropertyInfo)
                 {
-                    yield return new KeyValuePair<string, object>(prop.Name, prop.GetValue(instance, null));
+                    yield return new KeyValuePair<string, object>(prop.Name, prop.GetValue(this.instance, null));
                 }
             }
 
-            foreach (var key in properties.Keys)
+            foreach (var key in this.properties.Keys)
             {
-                yield return new KeyValuePair<string, object>(key, properties[key]);
+                yield return new KeyValuePair<string, object>(key, this.properties[key]);
             }
         }
 
@@ -203,18 +206,18 @@ namespace Westwind.Utilities.Dynamic
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             // first check the properties collection for member
-            if (properties.Keys.Contains(binder.Name))
+            if (this.properties.Keys.Contains(binder.Name))
             {
-                result = properties[binder.Name];
+                result = this.properties[binder.Name];
                 return true;
             }
 
             // Next check for Public properties via Reflection
-            if (instance != null)
+            if (this.instance != null)
             {
                 try
                 {
-                    return GetProperty(binder.Name, out result);
+                    return this.GetProperty(binder.Name, out result);
                 }
                 catch (Exception ex)
                 {
@@ -238,12 +241,12 @@ namespace Westwind.Utilities.Dynamic
         /// <returns>did the invoke work correctly</returns>
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            if (instance != null)
+            if (this.instance != null)
             {
                 try
                 {
                     // check instance passed in for methods to invoke
-                    if (InvokeMethod(binder.Name, args, out result))
+                    if (this.InvokeMethod(binder.Name, args, out result))
                     {
                         return true;
                     }
@@ -260,8 +263,7 @@ namespace Westwind.Utilities.Dynamic
         }
 
         /// <summary>
-        /// Property setter implementation tries to retrieve value from instance first then into
-        /// this object
+        /// Property setter implementation tries to retrieve value from instance first then into this object
         /// </summary>
         /// <param name="binder">the member binder</param>
         /// <param name="value">the value to set</param>
@@ -269,11 +271,11 @@ namespace Westwind.Utilities.Dynamic
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
             // first check to see if there's a native property to set
-            if (instance != null)
+            if (this.instance != null)
             {
                 try
                 {
-                    var result = SetProperty(binder.Name, value);
+                    var result = this.SetProperty(binder.Name, value);
                     if (result)
                     {
                         return true;
@@ -287,7 +289,7 @@ namespace Westwind.Utilities.Dynamic
             }
 
             // no match - set or add to dictionary
-            properties[binder.Name] = value;
+            this.properties[binder.Name] = value;
             return true;
         }
 
@@ -299,13 +301,13 @@ namespace Westwind.Utilities.Dynamic
         /// <returns>true if property is returned.</returns>
         protected bool GetProperty(string name, out object result)
         {
-            var miArray = instanceType.GetMember(name, BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.Instance);
+            var miArray = this.instanceType.GetMember(name, BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.Instance);
             if (miArray.Length > 0)
             {
                 var mi = miArray[0];
                 if (mi.MemberType == MemberTypes.Property)
                 {
-                    result = ((PropertyInfo)mi).GetValue(instance, null);
+                    result = ((PropertyInfo)mi).GetValue(this.instance, null);
                     return true;
                 }
             }
@@ -324,7 +326,7 @@ namespace Westwind.Utilities.Dynamic
         protected bool InvokeMethod(string name, object[] args, out object result)
         {
             // Look at the instanceType
-            var miArray = instanceType.GetMember(
+            var miArray = this.instanceType.GetMember(
                 name,
                 BindingFlags.InvokeMethod | BindingFlags.Public | BindingFlags.Instance);
 
@@ -347,7 +349,7 @@ namespace Westwind.Utilities.Dynamic
             this.instance = newInstance;
             if (newInstance != null)
             {
-                instanceType = newInstance.GetType();
+                this.instanceType = newInstance.GetType();
             }
         }
 
@@ -359,7 +361,7 @@ namespace Westwind.Utilities.Dynamic
         /// <returns>true if set</returns>
         private bool SetProperty(string name, object value)
         {
-            var miArray = instanceType.GetMember(name, BindingFlags.Public | BindingFlags.SetProperty | BindingFlags.Instance);
+            var miArray = this.instanceType.GetMember(name, BindingFlags.Public | BindingFlags.SetProperty | BindingFlags.Instance);
             if (miArray.Length > 0)
             {
                 var mi = miArray[0];

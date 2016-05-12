@@ -28,17 +28,17 @@ namespace Westwind.Utilities.Dynamic
         /// <inheritdoc/>
         public void ReadXml(XmlReader reader)
         {
-            var deserialized = (Dictionary<TKey, TValue>)serializer.ReadObject(reader);
+            var deserialized = (Dictionary<TKey, TValue>)this.serializer.ReadObject(reader);
             foreach (KeyValuePair<TKey, TValue> kvp in deserialized)
             {
-                Add(kvp.Key, kvp.Value);
+                this.Add(kvp.Key, kvp.Value);
             }
         }
 
         /// <inheritdoc/>
         public void WriteXml(XmlWriter writer)
         {
-            serializer.WriteObject(writer, this);
+            this.serializer.WriteObject(writer, this);
         }
     }
 }
