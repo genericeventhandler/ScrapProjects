@@ -93,13 +93,13 @@ namespace ScrapProject
 
             // we can use the property as well.
             dynamic appleX = apple;
-            Console.WriteLine("By casting to dynamic we can access apple.Pips {0}", appleX.Pips);
+            Console.WriteLine("By casting to dynamic we can access apple.Pips {0}\n", appleX.Pips);
 
-            Console.Write("We can access the hard coded properties as well Name {0} and Color {1}", apple.Name, apple.Color);
-            Console.Write("We can access the hard coded properties as well via dynamic Name {0} and Color {1} ", appleX.Name, appleX.Color);
-            Console.Write("We can also access like this apple[\"Pips\"] {0}", apple["Pips"]);
-            Console.WriteLine("And access the hard coded as well apple[\"Name\"] {0}", apple["Name"]);
-            Console.WriteLine("=== Waiting for asyncs to finish. ===");
+            Console.Write("We can access the hard coded properties as well Name {0} and Color {1}\n", apple.Name, apple.Color);
+            Console.Write("We can access the hard coded properties as well via dynamic Name {0} and Color {1}\n", appleX.Name, appleX.Color);
+            Console.Write("We can also access like this apple[\"Pips\"] {0}\n", apple["Pips"]);
+            Console.WriteLine("And access the hard coded as well apple[\"Name\"] {0}\n", apple["Name"]);
+            Console.WriteLine("=== Waiting for asyncs to finish. ===\n");
 
             asyncCall.WaitAndDispose();
 

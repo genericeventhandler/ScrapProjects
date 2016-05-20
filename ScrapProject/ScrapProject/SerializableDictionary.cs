@@ -4,6 +4,7 @@
 
 namespace Westwind.Utilities.Dynamic
 {
+    using System;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
     using System.Xml;
