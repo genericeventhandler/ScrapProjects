@@ -5,7 +5,7 @@ namespace DRJ.Utilities
 {
 	public class Information 
 {
-     	public static DateTime BuildDate = DateTime.Parse("20/05/2016 11:52:24");
+     	public static DateTime BuildDate = DateTime.Parse("02/06/2016 12:22:46");
 
     }
 }

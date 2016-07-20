@@ -1,5 +1,5 @@
-// <copyright file="Expando.cs" company="GenericEventHandler">
-//     Copyright (c) GenericEventHandler all rights reserved. Licensed under the Mit license.
+// <copyright file="Expando.cs" company="Westwind">
+//     Copyright (c) Westwind all rights reserved. Licensed under the Mit license.
 // </copyright>
 namespace Westwind.Utilities.Dynamic
 {
